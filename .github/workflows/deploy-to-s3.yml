@@ -7,14 +7,21 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check website file
-        run: test -f index.html
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::785823824192:role/GitHubActionsS3DeployRole
+          aws-region: us-east-1
+
+      - name: Deploy website to S3
+        run: aws s3 cp index.html s3://latheesha-aws-devops-project-785823824192-us-east-1-an/index.html
